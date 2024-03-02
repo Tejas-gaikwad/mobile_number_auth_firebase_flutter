@@ -1,7 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'all_items/bloc/items_bloc.dart';
 import 'all_items/view/all_items.dart';
 import 'auth/view/auth_view.dart';
 
@@ -10,7 +11,7 @@ Future main() async {
   // PermissionRequestService().requestNotificationPermission();
   await Firebase.initializeApp(
       options: const FirebaseOptions(
-    apiKey: "AIzaSyCf62JwYTlygS7wGfnql9ovRsIeUm79PnE",
+    apiKey: "AIzaSyCF4Rcpt_doJr0O_5fYZbP8rNQbw9QSb6s",
     appId: "1:585961919777:android:c93ef8e3d0ee33656fda60",
     projectId: "crud-app-3a2e2",
     messagingSenderId: '585961919777',
@@ -37,8 +38,19 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const AuthViewScreen(),
-      // AllItemsScreen(),
+      home: BlocProvider<ItemBloc>(
+        create: (context) => ItemBloc(ItemInitialState()),
+        child: AllItemsScreen(),
+      ),
+      // MultiBlocProvider(
+      //   providers: [
+      //     BlocProvider<ItemBloc>(
+      //       create: (context) => ItemBloc(ItemInitialState()),
+      //     ),
+      //   ],
+      //   child: const
+      // )
+      // const AuthViewScreen(),
     );
   }
 }

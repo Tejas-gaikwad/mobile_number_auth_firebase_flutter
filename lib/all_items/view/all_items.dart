@@ -1,6 +1,15 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:crud/all_items/bloc/items_bloc.dart';
+import 'package:crud/all_items/view/widgets/item_widget.dart';
 import 'package:crud/constants/colors.dart';
+import 'package:crud/model/item_model.dart';
+import 'package:crud/repositories/item_repositories.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 
 import 'widgets/bottom_sheet_widget.dart';
 
@@ -31,6 +40,22 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
     super.dispose();
   }
 
+  File? _image;
+
+  final picker = ImagePicker();
+
+  Future getImage() async {
+    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
+    });
+  }
+
   List items = [
     "a",
     "b",
@@ -48,6 +73,7 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
   ];
   @override
   Widget build(BuildContext context) {
+    final itemsRepository = ItemRepositories();
     return Scaffold(
       floatingActionButton: InkWell(
         onTap: () {
@@ -62,12 +88,30 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
                   topRight: Radius.circular(30.0)),
             ),
             builder: (context) {
-              return Padding(
-                padding: MediaQuery.of(context).viewInsets,
-                child: BottomSheetWidget(
-                  titleController: titleController,
-                  descriptionController: descriptionController,
-                ),
+              return StatefulBuilder(
+                builder: (context, setState) {
+                  return Padding(
+                    padding: MediaQuery.of(context).viewInsets,
+                    child: bottomSheetWidget(
+                      onTap: () {
+                        final item = ItemModel(
+                          title: titleController.text,
+                          description: descriptionController.text,
+                        );
+                        context.read<ItemBloc>().add(
+                              AddItemEvent(
+                                item: item,
+                                img: _image,
+                              ),
+                            );
+                      },
+                      setState: setState,
+                      image: _image,
+                      titleController: titleController,
+                      descriptionController: descriptionController,
+                    ),
+                  );
+                },
               );
             },
           );
@@ -108,166 +152,215 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
         elevation: 1.0,
         shadowColor: Colors.black,
       ),
-      body: SafeArea(
-        child: Container(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                const SizedBox(height: 15),
-                // StreamBuilder(
-                //   stream: stream,
-                //   builder: (context, snapshot) {
-                //     return Container(
-                //       child: Row(
-                //         children: [
-                //           Image.asset(
-                //             "assets/items_placeholder_png_img.png",
-                //             fit: BoxFit.cover,
-                //           ),
-                //           Column(
-                //             children: [
-                //               Text(
-                //                 "Title",
-                //               ),
-                //               Text(
-                //                 "Description",
-                //               ),
-                //             ],
-                //           ),
-                //           Icon(Icons.edit),
-                //         ],
-                //       ),
-                //     );
-                //   },
-                // ),
+      body: BlocConsumer<ItemBloc, ItemsState>(
+        builder: (context, state) {
+          return StreamBuilder<List<String>>(
+            stream: itemsRepository.getAllItems(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                final res = snapshot.data;
 
-                ListView.builder(
-                  physics: const NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: items.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 12),
-                      child: Column(
-                        children: [
-                          Dismissible(
-                            key: Key(items[index].toString()),
-                            background: Container(
-                              color: Colors.red,
-                              alignment: Alignment.centerLeft,
-                              padding: const EdgeInsets.only(left: 30.0),
-                              child: const Icon(
-                                Icons.delete,
-                                color: Colors.white,
-                              ),
-                            ),
-                            direction: DismissDirection.startToEnd,
-                            onDismissed: (direction) {
-                              setState(() {
-                                items.removeAt(index);
-                              });
-                            },
-                            child: Container(
-                              // margin: const EdgeInsets.symmetric(horizontal: 15),
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(25.0),
-                                  boxShadow: [
-                                    BoxShadow(
-                                      color: Colors.grey.withOpacity(0.4),
-                                      offset: const Offset(0.0, 0.0),
-                                      spreadRadius: 1.0,
-                                      blurRadius: 4.0,
-                                    )
-                                  ]),
-                              padding: const EdgeInsets.only(right: 12),
-                              child: Row(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(25.0),
-                                      bottomLeft: Radius.circular(25.0),
-                                    ),
-                                    child: Image.asset(
-                                      "assets/items_placeholder_png_img.png",
-                                      fit: BoxFit.cover,
-                                      height: 100,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 15),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            items[index].toString(),
-                                            style: const TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                            ),
-                                          ),
-                                          const Text(
-                                            "Description",
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        backgroundColor: Colors.transparent,
-                                        elevation: 0.0,
-                                        isScrollControlled: true,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.only(
-                                              topLeft: Radius.circular(30.0),
-                                              topRight: Radius.circular(30.0)),
-                                        ),
-                                        builder: (context) {
-                                          return Padding(
-                                            padding: MediaQuery.of(context)
-                                                .viewInsets,
-                                            child: BottomSheetWidget(
-                                              isEdit: true,
-                                              titleController: titleController,
-                                              descriptionController:
-                                                  descriptionController,
-                                            ),
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(10),
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        color: backgroundColor,
-                                      ),
-                                      child: const Icon(Icons.edit, size: 20),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                )
-              ],
+                Container(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 15),
+                        ListView.builder(
+                          shrinkWrap: true,
+                          physics: NeverScrollableScrollPhysics(),
+                          itemCount: res?.length,
+                          itemBuilder: (context, index) {
+                            final item = res?[index];
+
+                            return ItemWidget(
+                              itemId: item ?? "",
+                            );
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                );
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return SizedBox();
+            },
+          );
+        },
+        listener: (context, state) {
+          if (state is AddItemLoadingState) {
+            showDialog(
+              context: context,
+              builder: (context) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              },
+            );
+          }
+          if (state is AddItemErrorState) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Item Cannot be added")));
+          }
+          if (state is AddItemSuccessfullyState) {
+            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
+              builder: (context) {
+                return BlocProvider(
+                  create: (context) => ItemBloc(ItemInitialState()),
+                  child: const AllItemsScreen(),
+                );
+              },
+            ), (route) => false);
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Item added successfully")));
+          }
+        },
+      ),
+    );
+  }
+
+  Widget bottomSheetWidget({
+    required Function()? onTap,
+    required Function(void Function()) setState,
+    required TextEditingController titleController,
+    required TextEditingController descriptionController,
+    bool isEdit = false,
+    required File? image,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 30),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(25.0),
+          topRight: Radius.circular(25.0),
+        ),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              isEdit ? "Edit Item" : "Add Item",
+              style: const TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 24,
+              ),
             ),
-          ),
+            const SizedBox(height: 20),
+            InkWell(
+              onTap: () async {
+                await getImage();
+                // setModalState(() {});
+                setState(() {});
+              },
+              child: SizedBox(
+                // height: 100,
+                width: 100,
+                child: Column(
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(12),
+                        topRight: Radius.circular(12),
+                      ),
+                      child: image == null
+                          ? Image.asset(
+                              "assets/items_placeholder_png_img.png",
+                              fit: BoxFit.cover,
+                            )
+                          : Image.file(
+                              _image!,
+                              height: 80,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      width: 100,
+                      decoration: const BoxDecoration(
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(12),
+                          bottomRight: Radius.circular(12),
+                        ),
+                        color: greyColor,
+                      ),
+                      child: Text(
+                        isEdit ? "Change" : "Pick",
+                        style: TextStyle(color: Colors.black.withOpacity(0.4)),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+            TextField(
+              controller: titleController,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              maxLength: 10,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                counterText: "",
+                label: Text("Title"),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: borderColor),
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+            TextField(
+              controller: descriptionController,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+              ],
+              maxLength: 10,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                counterText: "",
+                label: Text("Description"),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: borderColor),
+                ),
+              ),
+            ),
+            const SizedBox(height: 25),
+            Align(
+              alignment: Alignment.center,
+              child: InkWell(
+                onTap: onTap,
+                child: Container(
+                  alignment: Alignment.center,
+                  width: MediaQuery.of(context).size.width,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    borderRadius: BorderRadius.circular(50.0),
+                  ),
+                  child: const Text(
+                    "SAVE",
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+          ],
         ),
       ),
     );
