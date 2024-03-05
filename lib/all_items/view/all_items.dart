@@ -19,7 +19,6 @@ class AllItemsScreen extends StatefulWidget {
 class _AllItemsScreenState extends State<AllItemsScreen> {
   @override
   Widget build(BuildContext context) {
-    // final itemsRepository = ItemRepositories();
     return Scaffold(
       floatingActionButton: InkWell(
         onTap: () {
@@ -40,24 +39,7 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
                     padding: MediaQuery.of(context).viewInsets,
                     child: BlocProvider<ItemBloc>(
                       create: (context) => ItemBloc(ItemInitialState()),
-                      child: BottomSheetWidget(
-
-                          // onTap: () {
-                          //   final item = ItemModel(
-                          //     title: titleController.text,
-                          //     description: descriptionController.text,
-                          //   );
-                          //   context.read<ItemBloc>().add(
-                          //         AddItemEvent(
-                          //           item: item,
-                          //           img: _image,
-                          //         ),
-                          //       );
-                          // },
-                          // image: _image,
-                          // titleController: titleController,
-                          // descriptionController: descriptionController,
-                          ),
+                      child: BottomSheetWidget(),
                     ),
                   );
                 },
@@ -106,7 +88,6 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
             .collection("items")
             .orderBy("timestamp", descending: true)
             .snapshots(),
-        // itemsRepository.getAllItems(),
         builder: (context, snapshot) {
           print("snapshot  ->>>    ${snapshot.data}");
           if (snapshot.hasData) {
@@ -176,30 +157,12 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
             const SizedBox(height: 20),
             InkWell(
               onTap: () async {
-                // await getImage();
                 setState(() {});
               },
               child: SizedBox(
-                // height: 100,
                 width: 100,
                 child: Column(
                   children: [
-                    // ClipRRect(
-                    //   borderRadius: const BorderRadius.only(
-                    //     topLeft: Radius.circular(12),
-                    //     topRight: Radius.circular(12),
-                    //   ),
-                    //   child: image == null
-                    //       ? Image.asset(
-                    //           "assets/items_placeholder_png_img.png",
-                    //           fit: BoxFit.cover,
-                    //         )
-                    //       : Image.file(
-                    //           _image!,
-                    //           height: 80,
-                    //           fit: BoxFit.cover,
-                    //         ),
-                    // ),
                     Container(
                       alignment: Alignment.center,
                       width: 100,

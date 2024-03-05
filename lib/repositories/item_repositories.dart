@@ -4,7 +4,6 @@ import 'package:crud/model/item_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class ItemRepositories {
-  // final createGatePassRepository = ItemService();
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
   Future<bool> addItemInDB({

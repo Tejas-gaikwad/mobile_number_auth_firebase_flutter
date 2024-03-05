@@ -37,8 +37,4 @@ class ItemService {
       id: id,
     );
   }
-
-  // Future<Stream<List<String>>> getAllItems() async {
-  //   return itemRepository.getAllItems();
-  // }
 }

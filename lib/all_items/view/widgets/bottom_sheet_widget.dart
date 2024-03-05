@@ -15,24 +15,14 @@ class BottomSheetWidget extends StatefulWidget {
   final String? itemId;
 
   final ItemModel? item;
-  // final TextEditingController titleController;
-  // final TextEditingController descriptionController;
   final bool isEdit;
-  // final Function()? onImageSelection;
-  // final File? image;
-  // final Function()? onTap;
 
   const BottomSheetWidget({
     super.key,
-    // required this.titleController,
-    // required this.descriptionController,
     this.isEdit = false,
     this.itemUrl,
     this.item,
     this.itemId,
-    // this.onImageSelection,
-    // this.image,
-    // this.onTap,
   });
 
   @override
@@ -83,9 +73,6 @@ class _BottomSheetWidgetState extends State<BottomSheetWidget> {
 
   @override
   Widget build(BuildContext context) {
-    print("widget.itemUrl   ->>   ${widget.itemUrl}");
-    print("_image?.path   ->>>   ${_image?.path}");
-
     return BlocConsumer<ItemBloc, ItemsState>(
       builder: (context, state) {
         return Container(

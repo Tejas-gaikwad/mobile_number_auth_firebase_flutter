@@ -5,7 +5,6 @@ import 'auth/view/auth_view.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // PermissionRequestService().requestNotificationPermission();
   await Firebase.initializeApp(
     options: const FirebaseOptions(
       apiKey: "AIzaSyCF4Rcpt_doJr0O_5fYZbP8rNQbw9QSb6s",
@@ -27,7 +26,6 @@ Future main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

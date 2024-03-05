@@ -74,30 +74,5 @@ class ItemBloc extends Bloc<ItemsEvent, ItemsState> {
         }
       },
     );
-
-    // Future<Stream<List<String>>> getAllItems() async {
-    //   try {
-    //     emit(GettingAllItemsLoadingState());
-    //     // final list = await itemServices.getAllItems();
-    //     emit(GetAllItemsSuccessState(itemsIdList: list));
-    //     return list;
-    //   } catch (err) {
-    //     print("error ->>>  $err");
-    //     emit(GettingAllItemsErrorState(errorMessage: err.toString()));
-    //     rethrow;
-    //   }
-    // }
-    // on<GetAllItemsEvent>(
-    //   (event, emit) async {
-    //     try {
-    //       emit(GettingAllItemsLoadingState());
-    //       final list = await itemServices.getAllItems();
-    //       emit(GettingAllItemsLoadedState(itemsList: list));
-    //     } catch (error) {
-    //       emit(GettingAllItemsErrorState(
-    //           errorMessage: 'Error While fetching all complaints'));
-    //     }
-    //   },
-    // );
   }
 }

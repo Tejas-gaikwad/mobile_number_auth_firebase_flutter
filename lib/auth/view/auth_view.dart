@@ -146,7 +146,6 @@ class _AuthViewScreenState extends State<AuthViewScreen> {
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     child: const Text(
-                      // isNumberEntered ? "Verify" :
                       "CONTINUE",
                       style: TextStyle(
                         fontSize: 14,

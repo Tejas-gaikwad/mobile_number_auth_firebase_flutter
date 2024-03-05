@@ -41,12 +41,8 @@ class ItemWidget extends StatelessWidget {
                   direction: DismissDirection.startToEnd,
                   onDismissed: (direction) {
                     context.read<ItemBloc>().add(DeleteItemEvent(id: itemId));
-                    // setState(() {
-                    //   items.removeAt(index);
-                    // });
                   },
                   child: Container(
-                    // margin: const EdgeInsets.symmetric(horizontal: 15),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(25.0),

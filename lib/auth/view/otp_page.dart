@@ -79,7 +79,6 @@ class _OtpPageScreenState extends State<OtpPageScreen> {
             children: [
               Container(
                 child: const Text(
-                  // isNumberEntered ? "Verify your Phone" :
                   "Continue with Phone",
                   style: TextStyle(
                     fontSize: 22,
