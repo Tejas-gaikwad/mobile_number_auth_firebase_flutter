@@ -30,6 +30,14 @@ class ItemService {
     );
   }
 
+  Future<bool> deleteItemInDB({
+    required String? id,
+  }) async {
+    return itemRepository.deleteItemInDB(
+      id: id,
+    );
+  }
+
   // Future<Stream<List<String>>> getAllItems() async {
   //   return itemRepository.getAllItems();
   // }

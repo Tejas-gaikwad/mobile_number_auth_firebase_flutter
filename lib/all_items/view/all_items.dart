@@ -121,8 +121,11 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
             return ListView.builder(
               itemCount: res?.docs.length,
               itemBuilder: (context, index) {
-                return ItemWidget(
-                  itemId: res?.docs[index].id ?? "",
+                return BlocProvider<ItemBloc>(
+                  create: (context) => ItemBloc(ItemInitialState()),
+                  child: ItemWidget(
+                    itemId: res?.docs[index].id ?? "",
+                  ),
                 );
               },
             );

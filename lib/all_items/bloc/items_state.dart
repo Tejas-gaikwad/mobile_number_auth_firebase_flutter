@@ -19,6 +19,12 @@ class UpdateItemSuccessfullyState extends ItemsState {}
 
 class UpdateItemErrorState extends ItemsState {}
 
+class DeleteItemLoadingState extends ItemsState {}
+
+class DeleteItemSuccessfullyState extends ItemsState {}
+
+class DeleteItemErrorState extends ItemsState {}
+
 class GettingAllItemsLoadingState extends ItemsState {}
 
 class GetAllItemsSuccessState extends ItemsState {

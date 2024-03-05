@@ -3,7 +3,6 @@ import 'package:crud/constants/colors.dart';
 import 'package:crud/model/item_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import '../../bloc/items_bloc.dart';
 import 'bottom_sheet_widget.dart';
 
@@ -29,7 +28,7 @@ class ItemWidget extends StatelessWidget {
             child: Column(
               children: [
                 Dismissible(
-                  key: Key(item!['itemId'].toString()),
+                  key: UniqueKey(),
                   background: Container(
                     color: Colors.red,
                     alignment: Alignment.centerLeft,
@@ -41,6 +40,7 @@ class ItemWidget extends StatelessWidget {
                   ),
                   direction: DismissDirection.startToEnd,
                   onDismissed: (direction) {
+                    context.read<ItemBloc>().add(DeleteItemEvent(id: itemId));
                     // setState(() {
                     //   items.removeAt(index);
                     // });
@@ -70,9 +70,9 @@ class ItemWidget extends StatelessWidget {
                               topLeft: Radius.circular(25.0),
                               bottomLeft: Radius.circular(25.0),
                             ),
-                            child: item['imgUrl'] != ""
+                            child: item?['imgUrl'] != ""
                                 ? Image.network(
-                                    item['imgUrl'] ?? "",
+                                    item?['imgUrl'] ?? "",
                                     fit: BoxFit.cover,
                                     height: 100,
                                   )
@@ -91,14 +91,15 @@ class ItemWidget extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  (item['title'] ?? "Not Available").toString(),
+                                  (item?['title'] ?? "Not Available")
+                                      .toString(),
                                   style: const TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 Text(
-                                  item['description'],
+                                  item?['description'],
                                   maxLines: 2,
                                   style: const TextStyle(
                                     fontSize: 12,
@@ -131,12 +132,12 @@ class ItemWidget extends StatelessWidget {
                                         create: (context) =>
                                             ItemBloc(ItemInitialState()),
                                         child: BottomSheetWidget(
-                                          itemUrl: item['imgUrl'],
+                                          itemUrl: item?['imgUrl'],
                                           isEdit: true,
-                                          itemId: item['itemId'],
+                                          itemId: item?['itemId'],
                                           item: ItemModel(
-                                            title: item['title'],
-                                            description: item['description'],
+                                            title: item?['title'],
+                                            description: item?['description'],
                                           ),
                                         ),
                                       ),

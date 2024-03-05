@@ -55,6 +55,26 @@ class ItemBloc extends Bloc<ItemsEvent, ItemsState> {
       },
     );
 
+    on<DeleteItemEvent>(
+      (event, emit) async {
+        emit(DeleteItemLoadingState());
+
+        print(' event.id,   ->>>>    ${event.id}');
+
+        bool status;
+
+        status = await itemServices.deleteItemInDB(
+          id: event.id,
+        );
+
+        if (status) {
+          emit(DeleteItemSuccessfullyState());
+        } else {
+          emit(DeleteItemErrorState());
+        }
+      },
+    );
+
     // Future<Stream<List<String>>> getAllItems() async {
     //   try {
     //     emit(GettingAllItemsLoadingState());

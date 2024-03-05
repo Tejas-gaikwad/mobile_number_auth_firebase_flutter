@@ -35,9 +35,13 @@ class UpdateItemEvent extends ItemsEvent {
   List<Object> get props => [item, img!, id!];
 }
 
-// class GetAllItemsEvent extends ItemsEvent {
-//   GetAllItemsEvent();
+class DeleteItemEvent extends ItemsEvent {
+  final String? id;
 
-//   @override
-//   List<Object> get props => [item];
-// }
+  DeleteItemEvent({
+    required this.id,
+  });
+
+  @override
+  List<Object> get props => [id!];
+}
