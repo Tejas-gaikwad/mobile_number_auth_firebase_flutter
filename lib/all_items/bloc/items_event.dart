@@ -15,7 +15,24 @@ class AddItemEvent extends ItemsEvent {
   });
 
   @override
-  List<Object> get props => [item];
+  List<Object> get props => [item, img!];
+}
+
+class UpdateItemEvent extends ItemsEvent {
+  final ItemModel item;
+  final File? img;
+  final String? id;
+  final String? imgUrl;
+
+  UpdateItemEvent({
+    this.imgUrl,
+    required this.id,
+    required this.item,
+    this.img,
+  });
+
+  @override
+  List<Object> get props => [item, img!, id!];
 }
 
 // class GetAllItemsEvent extends ItemsEvent {

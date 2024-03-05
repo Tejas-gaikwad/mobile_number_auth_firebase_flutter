@@ -12,10 +12,25 @@ class ItemService {
   }) async {
     return itemRepository.addItemInDB(
       item: item,
+      img: img,
     );
   }
 
-  Future<Stream<List<String>>> getAllItems() async {
-    return itemRepository.getAllItems();
+  Future<bool> updateItemInDB({
+    required String? id,
+    String? imgUrl,
+    required ItemModel? item,
+    File? img,
+  }) async {
+    return itemRepository.updateItemInDB(
+      imgUrl: imgUrl,
+      id: id,
+      item: item,
+      img: img,
+    );
   }
+
+  // Future<Stream<List<String>>> getAllItems() async {
+  //   return itemRepository.getAllItems();
+  // }
 }

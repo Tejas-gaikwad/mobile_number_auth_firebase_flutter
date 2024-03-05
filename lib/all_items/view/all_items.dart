@@ -21,59 +21,9 @@ class AllItemsScreen extends StatefulWidget {
 }
 
 class _AllItemsScreenState extends State<AllItemsScreen> {
-  late TextEditingController titleController;
-  late TextEditingController descriptionController;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    titleController = TextEditingController();
-    descriptionController = TextEditingController();
-  }
-
-  @override
-  void dispose() {
-    titleController = TextEditingController();
-    descriptionController = TextEditingController();
-
-    super.dispose();
-  }
-
-  File? _image;
-
-  final picker = ImagePicker();
-
-  Future getImage() async {
-    final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-      } else {
-        print('No image selected.');
-      }
-    });
-  }
-
-  List items = [
-    "a",
-    "b",
-    "c",
-    "d",
-    "e",
-    "f",
-    "g",
-    "h",
-    "i",
-    "j",
-    "k",
-    "l",
-    "m",
-  ];
   @override
   Widget build(BuildContext context) {
-    final itemsRepository = ItemRepositories();
+    // final itemsRepository = ItemRepositories();
     return Scaffold(
       floatingActionButton: InkWell(
         onTap: () {
@@ -92,23 +42,26 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
                 builder: (context, setState) {
                   return Padding(
                     padding: MediaQuery.of(context).viewInsets,
-                    child: bottomSheetWidget(
-                      onTap: () {
-                        final item = ItemModel(
-                          title: titleController.text,
-                          description: descriptionController.text,
-                        );
-                        context.read<ItemBloc>().add(
-                              AddItemEvent(
-                                item: item,
-                                img: _image,
-                              ),
-                            );
-                      },
-                      setState: setState,
-                      image: _image,
-                      titleController: titleController,
-                      descriptionController: descriptionController,
+                    child: BlocProvider<ItemBloc>(
+                      create: (context) => ItemBloc(ItemInitialState()),
+                      child: BottomSheetWidget(
+
+                          // onTap: () {
+                          //   final item = ItemModel(
+                          //     title: titleController.text,
+                          //     description: descriptionController.text,
+                          //   );
+                          //   context.read<ItemBloc>().add(
+                          //         AddItemEvent(
+                          //           item: item,
+                          //           img: _image,
+                          //         ),
+                          //       );
+                          // },
+                          // image: _image,
+                          // titleController: titleController,
+                          // descriptionController: descriptionController,
+                          ),
                     ),
                   );
                 },
@@ -152,74 +105,40 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
         elevation: 1.0,
         shadowColor: Colors.black,
       ),
-      body: BlocConsumer<ItemBloc, ItemsState>(
-        builder: (context, state) {
-          return StreamBuilder<List<String>>(
-            stream: itemsRepository.getAllItems(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final res = snapshot.data;
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection("items")
+            .orderBy("timestamp", descending: true)
+            .snapshots(),
+        // itemsRepository.getAllItems(),
+        builder: (context, snapshot) {
+          print("snapshot  ->>>    ${snapshot.data}");
+          if (snapshot.hasData) {
+            final res = snapshot.data;
 
-                Container(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 15),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: res?.length,
-                          itemBuilder: (context, index) {
-                            final item = res?[index];
+            print("res  ->>>>>    ${res?.docs.length}");
 
-                            return ItemWidget(
-                              itemId: item ?? "",
-                            );
-                          },
-                        )
-                      ],
-                    ),
-                  ),
-                );
-              }
-
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              return SizedBox();
-            },
-          );
-        },
-        listener: (context, state) {
-          if (state is AddItemLoadingState) {
-            showDialog(
-              context: context,
-              builder: (context) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+            return ListView.builder(
+              itemCount: res?.docs.length,
+              itemBuilder: (context, index) {
+                return ItemWidget(
+                  itemId: res?.docs[index].id ?? "",
                 );
               },
             );
           }
-          if (state is AddItemErrorState) {
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Item Cannot be added")));
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
           }
-          if (state is AddItemSuccessfullyState) {
-            Navigator.pushAndRemoveUntil(context, MaterialPageRoute(
-              builder: (context) {
-                return BlocProvider(
-                  create: (context) => ItemBloc(ItemInitialState()),
-                  child: const AllItemsScreen(),
-                );
-              },
-            ), (route) => false);
-            ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Item added successfully")));
+
+          if (snapshot.hasError) {
+            return Center(child: Text("error -> " + snapshot.error.toString()));
           }
+
+          return const SizedBox();
         },
       ),
     );
@@ -258,8 +177,7 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
             const SizedBox(height: 20),
             InkWell(
               onTap: () async {
-                await getImage();
-                // setModalState(() {});
+                // await getImage();
                 setState(() {});
               },
               child: SizedBox(
@@ -267,22 +185,22 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
                 width: 100,
                 child: Column(
                   children: [
-                    ClipRRect(
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(12),
-                        topRight: Radius.circular(12),
-                      ),
-                      child: image == null
-                          ? Image.asset(
-                              "assets/items_placeholder_png_img.png",
-                              fit: BoxFit.cover,
-                            )
-                          : Image.file(
-                              _image!,
-                              height: 80,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
+                    // ClipRRect(
+                    //   borderRadius: const BorderRadius.only(
+                    //     topLeft: Radius.circular(12),
+                    //     topRight: Radius.circular(12),
+                    //   ),
+                    //   child: image == null
+                    //       ? Image.asset(
+                    //           "assets/items_placeholder_png_img.png",
+                    //           fit: BoxFit.cover,
+                    //         )
+                    //       : Image.file(
+                    //           _image!,
+                    //           height: 80,
+                    //           fit: BoxFit.cover,
+                    //         ),
+                    // ),
                     Container(
                       alignment: Alignment.center,
                       width: 100,
@@ -304,6 +222,11 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
             ),
             const SizedBox(height: 25),
             TextField(
+              onChanged: (value) {
+                titleController.text = value;
+                print("titleController  ->>>   ${titleController.text}");
+                setState(() {});
+              },
               controller: titleController,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,
@@ -320,6 +243,13 @@ class _AllItemsScreenState extends State<AllItemsScreen> {
             ),
             const SizedBox(height: 25),
             TextField(
+              onChanged: (value) {
+                setState(() {
+                  descriptionController.text = value;
+                  print(
+                      "descriptionController  ->>>   ${descriptionController.text}");
+                });
+              },
               controller: descriptionController,
               inputFormatters: [
                 FilteringTextInputFormatter.digitsOnly,

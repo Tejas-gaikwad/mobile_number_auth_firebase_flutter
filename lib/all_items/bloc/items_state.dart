@@ -13,6 +13,12 @@ class AddItemSuccessfullyState extends ItemsState {}
 
 class AddItemErrorState extends ItemsState {}
 
+class UpdateItemLoadingState extends ItemsState {}
+
+class UpdateItemSuccessfullyState extends ItemsState {}
+
+class UpdateItemErrorState extends ItemsState {}
+
 class GettingAllItemsLoadingState extends ItemsState {}
 
 class GetAllItemsSuccessState extends ItemsState {
