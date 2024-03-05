@@ -4,13 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crud/all_items/bloc/items_bloc.dart';
 import 'package:crud/all_items/view/widgets/item_widget.dart';
 import 'package:crud/constants/colors.dart';
-import 'package:crud/model/item_model.dart';
-import 'package:crud/repositories/item_repositories.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:image_picker/image_picker.dart';
-
 import 'widgets/bottom_sheet_widget.dart';
 
 class AllItemsScreen extends StatefulWidget {

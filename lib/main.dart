@@ -1,9 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'all_items/bloc/items_bloc.dart';
-import 'all_items/view/all_items.dart';
 import 'auth/view/auth_view.dart';
 
 Future main() async {
@@ -34,22 +31,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'CRUD',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-          useMaterial3: true,
-        ),
-        home: AllItemsScreen()
-        // MultiBlocProvider(
-        //   providers: [
-        //     BlocProvider<ItemBloc>(
-        //       create: (context) => ItemBloc(ItemInitialState()),
-        //     ),
-        //   ],
-        //   child: const
-        // )
-        // const AuthViewScreen(),
-        );
+      title: 'CRUD',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      home: const AuthViewScreen(),
+    );
   }
 }

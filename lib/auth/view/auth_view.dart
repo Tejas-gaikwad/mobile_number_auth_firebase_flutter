@@ -51,27 +51,16 @@ class _AuthViewScreenState extends State<AuthViewScreen> {
           MaterialPageRoute(
             builder: (context) => BlocProvider(
               create: (context) => ItemBloc(ItemInitialState()),
-              child: AllItemsScreen(),
+              child: const AllItemsScreen(),
             ),
           ),
         );
       },
       verificationFailed: (error) {
-        print("error -<<<<<<<<    ${error}");
-
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(error.message.toString())));
       },
       codeSent: (verificationId, forceResendingToken) {
-        // final smsCode = otpController.text.trim();
-
-        // final AuthCredential authCredential = PhoneAuthProvider.credential(
-        //   smsCode: smsCode,
-        //   verificationId: verificationId,
-        // );
-
-        // print("authCredential   ---------     ${authCredential}");
-
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -83,7 +72,6 @@ class _AuthViewScreenState extends State<AuthViewScreen> {
       },
       codeAutoRetrievalTimeout: (verificationId) {},
     );
-    print("DONE ->>>>>>>>>>>>>>>>>>>>>>>");
   }
 
   @override
@@ -98,10 +86,9 @@ class _AuthViewScreenState extends State<AuthViewScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                child: Text(
-                  // isNumberEntered ? "Verify your Phone" :
+                child: const Text(
                   "Continue with Phone",
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 22,
                     fontWeight: FontWeight.w500,
                     color: blackColor,
@@ -109,24 +96,6 @@ class _AuthViewScreenState extends State<AuthViewScreen> {
                 ),
               ),
               const SizedBox(height: 40),
-              // isNumberEntered
-              //     ? TextField(
-              //         controller: otpController,
-              //         inputFormatters: [
-              //           FilteringTextInputFormatter.digitsOnly,
-              //         ],
-              //         maxLength: 10,
-              //         keyboardType: TextInputType.number,
-              //         decoration: const InputDecoration(
-              //           counterText: "",
-              //           prefixIcon: Icon(Icons.phone),
-              //           label: Text("Enter OTP"),
-              //           border: OutlineInputBorder(
-              //             borderSide: BorderSide(color: borderColor),
-              //           ),
-              //         ),
-              //       )
-              //     :
               TextField(
                 onChanged: (value) {
                   if (value.length == 10) {
@@ -176,10 +145,10 @@ class _AuthViewScreenState extends State<AuthViewScreen> {
                       color: primaryColor,
                       borderRadius: BorderRadius.circular(50.0),
                     ),
-                    child: Text(
+                    child: const Text(
                       // isNumberEntered ? "Verify" :
                       "CONTINUE",
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 14,
                         color: Colors.white,
                         fontWeight: FontWeight.w500,
